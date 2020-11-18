@@ -16,7 +16,7 @@ public class CreateXML {
 
         try{
             String text = "Hello";
-            String path = "D:\\Usuários\\Filippo\\Desktop\\";
+            String path = "";
             String file = "xmldocument.xml";
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
