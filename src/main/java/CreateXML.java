@@ -5,10 +5,13 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.io.StringWriter;
 
 public class CreateXML {
 
@@ -17,7 +20,7 @@ public class CreateXML {
         try{
             String text = "Hello";
             String path = "";
-            String file = "xmldocument.xml";
+            String fileName = "xmldocument.xml";
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
@@ -56,19 +59,55 @@ public class CreateXML {
             post2.appendChild(textoRecebido2);
 
             //Construindo XML
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer t = tf.newTransformer();
-            DOMSource domSource = new DOMSource(d);
-            StreamResult streamResult = new StreamResult(new File(path+file));
 
-            t.transform(domSource, streamResult);
-            System.out.println("XML criado em: " + path);
+            saveXML(d, path, fileName);
+            System.out.println(stringXML(d));
 
         } catch (Exception e){
             e.printStackTrace();
             System.out.println("Diretório " + System.getProperty("user.dir"));
         }
 
+
+    }
+
+    private static void saveXML(Document document, String path, String fileName) throws TransformerException {
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+
+        DOMSource domSource = new DOMSource();
+        domSource.setNode(document);
+
+        File file = new File(path + fileName);
+
+        StreamResult streamResult = new StreamResult();
+        streamResult.setSystemId(file);
+
+        transformer.transform(domSource, streamResult);
+
+        System.out.println("XML criado em: " + path);
+
+    }
+
+    private static String stringXML(Document document) throws TransformerException {
+
+        String xml;
+
+        DOMSource domSource = new DOMSource();
+        domSource.setNode(document);
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+
+        StringWriter stringWriter = new StringWriter();
+        StreamResult streamResult = new StreamResult();
+        streamResult.setWriter(stringWriter);
+
+        transformer.transform(domSource, streamResult);
+
+        xml = stringWriter.toString();
+        return xml;
 
     }
 
